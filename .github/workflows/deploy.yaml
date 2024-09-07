@@ -19,11 +19,10 @@ jobs:
       - name: Get the whole repo
         uses: actions/checkout@v4
 
-      # Getting and applying only changed manifests
+      # Parsing files list
       - name: Get a list of changed files
         id: changed-files
         uses: tj-actions/changed-files@v39
-
       - name: Convert string to multiline
         id: convert
         run: |
@@ -31,11 +30,14 @@ jobs:
           echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr " " "\n" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
+      # Applying only changed manifests
       - if: ${{ env.MULTILINE != '' }}
         name: Showing files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             if [[ $file == *.yaml && $file != .github/workflows/* ]]; then
               /usr/local/bin/kubectl apply -f $file
+            else
+              echo "Nothing to deploy"
             fi
           done
