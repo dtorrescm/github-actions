@@ -10,13 +10,16 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # - name: Get the whole repo
-      #   uses: actions/checkout@v3
+      # Sanity check
+      - name: Run a command
+        run: |
+          /usr/local/bin/kubectl get nodes
 
-      # - name: Run a command
-      #   run: |
-      #     /usr/local/bin/kubectl get nodes
+      # When self-hosting this is necessary
+      - name: Get the whole repo
+        uses: actions/checkout@v3
 
+      # Getting and applying only changed manifests
       - name: Get a list of changed files
         id: changed-files
         uses: tj-actions/changed-files@v39
