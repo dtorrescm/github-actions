@@ -17,7 +17,7 @@ jobs:
 
       # When self-hosting this is necessary
       - name: Get the whole repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Getting and applying only changed manifests
       - name: Get a list of changed files
@@ -30,13 +30,6 @@ jobs:
           echo 'MULTILINE<<EOF' >> $GITHUB_ENV
           echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr " " "\n" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-
-      # - if: ${{ env.MULTILINE != '' }}
-      #   name: Pulling changed files
-      #   uses: actions/checkout@v4
-      #   with:
-      #     sparse-checkout: |
-      #       ${{ env.MULTILINE }}
 
       - if: ${{ env.MULTILINE != '' }}
         name: Showing files
