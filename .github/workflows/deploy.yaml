@@ -35,7 +35,7 @@ jobs:
         name: Showing files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            if [[ $file == *.yaml ]]; then
+            if [[ $file == *.yaml && $file != .github/workflows/* ]]; then
               /usr/local/bin/kubectl apply -f $file
             fi
           done
