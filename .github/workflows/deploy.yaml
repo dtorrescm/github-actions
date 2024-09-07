@@ -11,19 +11,19 @@ jobs:
 
     steps:
       # Sanity check
-      - name: Run a command
+      - name: Run
         run: |
           /usr/local/bin/kubectl get nodes
 
       # When self-hosting this is necessary
-      - name: Get the whole repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       # Parsing files list
-      - name: Get a list of changed files
+      - name: List of changed files
         id: changed-files
         uses: tj-actions/changed-files@v39
-      - name: Convert string to multiline
+      - name: String to multiline
         id: convert
         run: |
           echo 'MULTILINE<<EOF' >> $GITHUB_ENV
@@ -32,7 +32,7 @@ jobs:
 
       # Applying only changed manifests
       - if: ${{ env.MULTILINE != '' }}
-        name: Showing files
+        name: Applying
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             if [[ $file == *.yaml && $file != .github/workflows/* ]]; then
