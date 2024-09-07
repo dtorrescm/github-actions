@@ -10,8 +10,36 @@ jobs:
     runs-on: self-hosted
 
     steps:
+#      - name: Get the whole repo
+#        uses: actions/checkout@v3
 
-      - name: Run a command
+      # - name: Run a command
+      #   run: |
+      #     /usr/local/bin/kubectl get nodes
+
+      - name: Get a list of changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v39
+
+      - name: Convert string to multiline
+        id: convert
         run: |
-          /usr/local/bin/kubectl get nodes
-          
+          echo 'MULTILINE<<EOF' >> $GITHUB_ENV
+          echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr " " "\n" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - if: ${{ env.MULTILINE != '' }}
+        name: Pulling changed files
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            ${{ env.MULTILINE }}
+
+      - if: ${{ env.MULTILINE != '' }}
+        name: Showing files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ $file == *.yaml ]]; then
+              echo "Changed: $file"
+            fi
+          done
