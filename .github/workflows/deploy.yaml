@@ -43,6 +43,6 @@ jobs:
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             if [[ $file == *.yaml ]]; then
-              echo "Changed: $file"
+              /usr/local/bin/kubectl apply -f $file
             fi
           done
