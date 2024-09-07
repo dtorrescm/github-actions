@@ -30,14 +30,13 @@ jobs:
           echo 'MULTILINE<<EOF' >> $GITHUB_ENV
           echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr " " "\n" >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-          echo $GITHUB_ENV
 
-      - if: ${{ env.MULTILINE != '' }}
-        name: Pulling changed files
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            ${{ env.MULTILINE }}
+      # - if: ${{ env.MULTILINE != '' }}
+      #   name: Pulling changed files
+      #   uses: actions/checkout@v4
+      #   with:
+      #     sparse-checkout: |
+      #       ${{ env.MULTILINE }}
 
       - if: ${{ env.MULTILINE != '' }}
         name: Showing files
