@@ -1,10 +1,13 @@
 name: Deploy Manifests
 
 on:
+  # Only runs when the previous workflow is completed
   workflow_run:
     workflows: ["Build Artifacts"]
     types:
       - completed
+  # This workflow can be manually triggered
+  workflow_dispatch:
 
 jobs:
   deploy:
