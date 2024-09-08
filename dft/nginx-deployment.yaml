@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: nginx-app
-        image: nginx:alpine
+        image: localhost:32000/nginx:registry
         ports:
         - containerPort: 80
         startupProbe:
