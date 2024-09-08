@@ -5,6 +5,7 @@ on:
     workflows: ["Dev Build Artifacts"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   deploy:
