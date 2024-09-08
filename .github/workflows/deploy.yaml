@@ -2,7 +2,7 @@ name: Deploy on Merge to Main
 
 on:
   workflow_run:
-    workflows: ["Build Artifacts"]
+    workflows: ["Build Artifact"]
     types:
       - completed
 
