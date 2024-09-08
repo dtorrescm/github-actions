@@ -1,0 +1,82 @@
+# NGINX APP - Combined Manifests
+
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: dft
+  labels:
+    name: dft
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-app
+  namespace: dft
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+      - name: nginx-app
+        image: localhost:32000/dft:latest
+        ports:
+        - containerPort: 80
+        startupProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 5
+          failureThreshold: 20
+        volumeMounts:
+        - name: www
+          mountPath: /var/www/html
+      volumes:
+      - name: www
+        hostPath:
+          path: /mnt/data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: dft
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: nginx-app
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  namespace: dft
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: nginx.dftorres.ca
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx-service
+            port:
+              number: 80
+
