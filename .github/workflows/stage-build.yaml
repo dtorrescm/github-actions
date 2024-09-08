@@ -1,0 +1,45 @@
+name: Stage Build Artifacts
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: self-hosted-non-prod
+
+    steps:
+      # Sanity check
+      - name: Run
+        run: |
+          /usr/bin/docker images
+
+      # When self-hosting this is necessary
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Parsing files list
+      - name: List of changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v39
+      - name: String to multiline
+        id: convert
+        run: |
+          echo 'MULTILINE<<EOF' >> $GITHUB_ENV
+          echo "${{ steps.changed-files.outputs.all_changed_files }}" | tr " " "\n" >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      # Applying only changed manifests
+      - if: ${{ env.MULTILINE != '' }}
+        name: Applying
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ $file == */Dockerfile && $file != .github/workflows/* ]]; then
+              cd $(dirname "$file")
+              /usr/bin/docker build . -t 10.10.10.100:32000/stage-$(dirname $(dirname "$file"))
+              /usr/bin/docker push 10.10.10.100:32000/stage-$(dirname $(dirname "$file"))
+            else
+              echo "Nothing to deploy"
+            fi
+          done
