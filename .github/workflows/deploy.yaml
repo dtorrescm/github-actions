@@ -1,9 +1,10 @@
 name: Deploy on Merge to Main
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Build Artifacts"]
+    types:
+      - completed
 
 jobs:
   deploy:
