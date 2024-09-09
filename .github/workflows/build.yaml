@@ -1,9 +1,16 @@
 name: Build Artifacts
 
 on:
+  # Runs when changes are pushed directly (no PR)
   push:
     branches:
       - main
+  # Runs when a PR is merged (closed) into main
+  pull_request_target:
+    types:
+      - closed
+  # This workflow can be manually triggered
+  workflow_dispatch:
 
 jobs:
   build:
